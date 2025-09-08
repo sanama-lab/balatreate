@@ -3,36 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página de ejemplo</title>
+    <title>Página de Balatro</title>
     <link rel="stylesheet" href="estilos.css">
-    <div class="balatro-buttons-head">
-        <button>Menu</button>
-        <button>Comodines</button>
-        <button>Cartas</button>
-        <button>Potenciadores</button>
-    </div>
 </head>
 <body>
-    <main>
-        <section id="balatro" class="balatro-section">
-            <h2>¿Qué es Balatro?</h2>
-            <p>Balatro es un videojuego de cartas que reinventa el poker, fusionando su estrategia con la progresión y el azar de los juegos roguelike. Tu objetivo es formar manos de poker para ganar fichas y superar desafíos de puntuación en rondas cada vez más difíciles.
-
-
-                Lo que lo hace único es su profundo sistema de modificadores. Puedes adquirir comodines con efectos especiales, comprar cartas de Tarot que alteran tu mazo y usar cartas de Planetas para mejorar manos específicas. La clave está en combinar estos elementos para crear sinergias poderosas y lograr puntuaciones masivas.
-               
-                El juego destaca por su estética retro de casino, con un estilo visual de neón y una banda sonora de synthwave. Cada partida es diferente, ofreciendo un desafío adictivo y una gran profundidad estratégica ideal para quienes buscan un juego de cartas con un giro moderno.</p>
-            <br><br>
-            A lo largo de la partida, el jugador debe formar manos de póker para sumar puntos y avanzar por rondas, enfrentándose a límites de puntuación y reglas especiales que cambian constantemente. Además, Balatro ofrece una gran profundidad táctica, permitiendo comprar cartas especiales, desbloquear habilidades y experimentar con diferentes estrategias. Su estilo visual llamativo y su música envolvente hacen que cada partida sea emocionante y desafiante, ideal para quienes buscan un juego de cartas con un giro moderno y adictivo.</p>
-            <h3>¿Cómo se juega?</h3>
+    <div class="container">
+        <aside class="sidebar">
+            <h2>Navegación</h2>
             <ul>
-                <li>Forma manos de póker para sumar puntos.</li>
-                <li>Compra cartas y potenciadores entre rondas.</li>
-                <li>Supera el puntaje objetivo para avanzar.</li>
-                <li>Elige tu estrategia y adapta tu mazo.</li>
+                <li><a href="pagina1.html">Combos de la comunidad</a></li>
+                <li><a href="pagina2.html">Comodines</a></li>
+                <li><a href="pagina3.html">Barajas</a></li>
+                <li><a href="pagina4.html">Tickets</a></li>
+                <li><a href="pagina5.html">Tarot</a></li>
+                <li><a href="pagina6.html">Planeta</a></li>
+                <li><a href="pagina7.html">Espectrales</a></li>
+                <li><a href="pagina8.html">Encantamiento</a></li>
+                <li><a href="pagina9.html">Sellos</a></li>
+                <li><a href="pagina10.html">Packs y Tienda</a></li>
+                <li><a href="pagina11.html">Ciegas </a></li>
+                <li><a href="pagina12.html">Desafíos</a></li>
+                <li><a href="pagina13.html">Etiquetaa</a></li>
+                <li><a href="pagina14.html">Ediciones</a></li>
             </ul>
-        </section>
-    </main>
+        </aside>
+
+
+        <main class="content">
+            <section id="balatro" class="balatro-section">
+                <h1>Balatro: Entendiendo los Elementos del Juego</h1>
+                <p><strong>Balatro</strong> es un juego roguelike de construcción de mazos basado en el póker. Tu objetivo es conseguir la mayor puntuación posible para superar las rondas.</p>
+               
+                <h2>Mazo, Manos y Puntuación</h2>
+                <ul>
+                    <li><strong>Mazo:</strong> Tu baraja de 52 cartas. Puedes modificarla con cartas especiales.</li>
+                    <li><strong>Manos:</strong> Las combinaciones de póker que juegas, como una escalera o un full. Cada mano tiene un valor base.</li>
+                    <li><strong>Fichas:</strong> El valor base de tu mano. Por ejemplo, un par puede valer 10 fichas. Las fichas de las cartas individuales también se suman.</li>
+                    <li><strong>Multiplicador:</strong> Un valor que se multiplica por el total de fichas de tu mano. Un multiplicador de x5 convierte 100 fichas en 500 puntos.</li>
+                </ul>
+               
+                <hr>
+               
+                <h2>Jokers y Cartas de Tarjeta</h2>
+                <ul>
+                    <li><strong>Jokers:</strong> Cartas especiales con efectos únicos que te ayudan a aumentar tu puntuación o modificar el juego. Solo puedes tener un número limitado de ellos.</li>
+                    <li><strong>Cartas de Tarjeta:</strong>
+                        <ul>
+                            <li><strong>Tarot:</strong> Modifican las cartas de tu mazo al instante, por ejemplo, cambiando su palo o convirtiéndolas en cartas de oro.</li>
+                            <li><strong>Planeta:</strong> Aumentan permanentemente el valor de una mano de póker específica para toda la partida.</li>
+                            <li><strong>Espectrales:</strong> Tienen efectos muy poderosos y, a menudo, impredecibles. Pueden transformar cartas o tener efectos especiales.</li>
+                        </ul>
+                    </li>
+                </ul>
+               
+                <hr>
+               
+                <h2>Progreso y Recursos</h2>
+                <ul>
+                    <li><strong>Dinero :</strong> La moneda del juego. La ganas al completar rondas y la usas para comprar objetos en la tienda.</li>
+                    <li><strong>Tienda:</strong> El lugar donde gastas tu dinero para comprar Jokers, cartas de Tarot, de Planeta y más.</li>
+                    <li><strong>Ciega :</strong> Cada ronda tiene una puntuación objetivo que debes alcanzar para avanzar. Hay ciegas pequeñas, grandes y el jefe (Boss Blind).</li>
+                    <li><strong>Apuesta:</strong> Un grupo de tres ciegas. Al superarlas, pasas al siguiente nivel de dificultad.</li>
+                    <li><strong>Descarte :</strong> Te permite cambiar cartas de tu mano. Cada ronda tiene un límite de descartes.</li>
+                </ul>
+            </section>
+        </main>
+    </div>
+   
     <footer>
         <p>balatro balatrez</p>
     </footer>
