@@ -48,37 +48,6 @@ header {
     transition: transform 0.2s, box-shadow 0.2s;
     letter-spacing: 1px;
 }
-
-
-.balatro-buttons-head button:nth-child(1) {
-    background: #0074d9;
-    color: #fff;
-}
-
-
-.balatro-buttons-head button:nth-child(2) {
-    background: #ffdc00;
-    color: #222;
-}
-
-
-.balatro-buttons-head button:nth-child(3) {
-    background: #c00;
-    color: #fff;
-}
-
-
-.balatro-buttons-head button:nth-child(4) {
-    background: #2ecc40;
-}
-
-
-.balatro-buttons-head button:hover {
-    transform: scale(1.08);
-    box-shadow: 0 0 16px #c00;
-}
-
-
 .container {
     display: flex;
     flex-grow: 1;
