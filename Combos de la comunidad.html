@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Combos de la Comunidad</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <h2>Navegación</h2>
+            <ul>
+                <li><a href="Barajas.html">Barajas</a></li>
+                <li><a href="Ciegas.html">Ciegas</a></li>
+                <li><a href="Combos de la comunidad.html">Combos de la comunidad</a></li>
+                <li><a href="Comodines.html">Comodines</a></li>
+                <li><a href="Desafíos.html">Desafíos</a></li>
+                <li><a href="Ediciones.html">Ediciones</a></li>
+                <li><a href="Espectrales.html">Espectrales</a></li>
+                <li><a href="Etiqueta.html">Etiqueta</a></li>
+                <li><a href="Fichas.html">Fichas</a></li>
+                <li><a href="index.html">Menu</a></li>
+                <li><a href="Mejoras.html">Mejoras</a></li>
+                <li><a href="Packs y Tienda.html">Packs y Tienda</a></li>
+                <li><a href="Planeta.html">Planeta</a></li>
+                <li><a href="Sellos.html">Sellos</a></li>
+                <li><a href="Stikers.html">Stikers</a></li>
+                <li><a href="Tarot.html">Tarot</a></li>
+                <li><a href="Tickets.html">Tickets</a></li>
+            </ul>
+        </aside>
+        <div class="grid-container">
+
+            <div class="seccion-subir-combo">
+                <h1>SUBE TU COMBO</h1>
+                <form action="/submit-combo" method="post">
+                    <div class="campo">
+                        <label for="nombre-usuario">Tu Nombre:</label>
+                        <input type="text" id="nombre-usuario" name="nombre_usuario" placeholder="Ej: JokerMastro99">
+                    </div>
+
+                    <div class="campo">
+                        <p>Elige hasta 5 Jokers:</p>
+                        <div class="seleccion-jokers">
+                            <div class="joker-opcion">
+                                <input type="checkbox" id="joker1" name="joker_ids[]" value="1">
+                                <label for="joker1"><img src="/img/jokers/joker.png" alt="Joker"></label>
+                            </div>
+                            <div class="joker-opcion">
+                                <input type="checkbox" id="joker2" name="joker_ids[]" value="2">
+                                <label for="joker2"><img src="/img/jokers/sigil.png" alt="Sigil"></label>
+                            </div>
+                            </div>
+                    </div>
+
+                    <div class="campo">
+                        <label for="comentario">Comentario:</label>
+                        <textarea id="comentario" name="comentario" placeholder="Explica tu estrategia..."></textarea>
+                    </div>
+
+                    <button type="submit">SUBIR COMBO</button>
+                </form>
+            </div>
+
+            <div class="seccion-combos-comunidad">
+                <h1>COMBOS DE LA COMUNIDAD</h1>
+
+                <div class="combo-card">
+                    <h2>COMBO DE: SolitarioSteve</h2>
+                    <div class="jokers-combo">
+                        <img src="/img/jokers/joker.png" alt="Joker">
+                        <img src="/img/jokers/sigil.png" alt="Sigil">
+                        <img src="/img/jokers/blueprint.png" alt="Blueprint">
+                        <img src="/img/jokers/midas_mask.png" alt="Midas Mask">
+                    </div>
+                    <p>Comentario: Este combo me dio 21 primilita victoria Ascension 15! El Midas y Blueshunt son clave para escalar gold infinita y Joker y Sigil.</p>
+                </div>
+
+                </div>
+
+        </div>
+    </div>
+</body>
+</html>
