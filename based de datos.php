@@ -173,6 +173,7 @@ $conn->close();
 
                 <?php if (empty($community_combos)): ?>
                     <p>Aún no hay combos en la comunidad. ¡Sé el primero en subir uno!</p>
+                    
                 <?php else: ?>
                     <?php foreach ($community_combos as $combo): ?>
                         <div class="combo-card">
