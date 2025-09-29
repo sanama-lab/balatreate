@@ -94,7 +94,6 @@ $result_combos = $conn->query($sql_select_combos);
 if ($result_combos->num_rows > 0) {
     while($row = $result_combos->fetch_assoc()) {
         // Dividir las cadenas GROUP_CONCAT en arrays
-        $row['joker_nombres'] = explode(',', $row['joker_nombres']);
         $row['joker_rutas_imagen'] = explode(',', $row['joker_rutas_imagen']);
         $row['joker_alt_texts'] = explode(',', $row['joker_alt_texts']);
         $community_combos[] = $row;
@@ -154,7 +153,6 @@ $conn->close();
                                     <input type="checkbox" id="joker_<?php echo $joker['id']; ?>" name="joker_ids[]" value="<?php echo $joker['id']; ?>">
                                     <label for="joker_<?php echo $joker['id']; ?>">
                                         <img src="<?php echo htmlspecialchars($joker['ruta_imagen']); ?>" alt="<?php echo htmlspecialchars($joker['alt_text']); ?>">
-                                        <span class="joker-nombre-form"><?php echo htmlspecialchars($joker['nombre']); ?></span>
                                     </label>
                                 </div>
                             <?php endforeach; ?>
