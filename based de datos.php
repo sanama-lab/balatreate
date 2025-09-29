@@ -1,63 +1,107 @@
 <?php
-// Configuración de la conexión a la base de datos
-$servername = "localhost";
-$username = "tu_usuario"; // Reemplaza con tu usuario de MySQL
-$password = "tu_contraseña"; // Reemplaza con tu contraseña
-$dbname = "balatro_db";
+// 1. Configuración de la Base de Datos
+$servername = "localhost"; // O la IP de tu servidor de base de datos
+$username = "phpmyadmin"; // ¡Cambia esto por tu usuario de MySQL!
+$password = "RedesInformaticas"; // ¡Cambia esto por tu contraseña de MySQL!
+$dbname = "balatro_jokers_db";
 
 // Crear conexión
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Verificar la conexión
+// Verificar conexión
 if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
-// Inicializar variables para mostrar en el HTML
-$comodin_nombre = "";
-$comodin_descripcion = "";
-$comodin_rareza = "";
-$comodin_precio = "";
-$comodin_imagen = "";
-$comodin_alt_text = "";
-$comodines_disponibles = [];
+// 2. Lógica para Subir un Nuevo Combo (manejo del formulario POST)
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $nombre_usuario = mysqli_real_escape_string($conn, $_POST['nombre_usuario']);
+    $comentario = mysqli_real_escape_string($conn, $_POST['comentario']);
+    $joker_ids = $_POST['joker_ids'] ?? []; // Array de IDs de los jokers seleccionados
 
-// Obtener la lista de todos los comodines para el menú desplegable
-$sql_lista = "SELECT id, nombre FROM comodines ORDER BY nombre ASC";
-$result_lista = $conn->query($sql_lista);
-if ($result_lista->num_rows > 0) {
-    while($row = $result_lista->fetch_assoc()) {
-        $comodines_disponibles[] = $row;
+    // Validar que se hayan seleccionado al menos un joker y que el nombre de usuario no esté vacío
+    if (empty($nombre_usuario) || empty($joker_ids)) {
+        echo "<p style='color: red;'>Error: Debes ingresar un nombre de usuario y seleccionar al menos un Joker.</p>";
+    } else {
+        // Iniciar transacción para asegurar que todo se guarde o nada se guarde
+        $conn->begin_transaction();
+
+        try {
+            // Insertar el nuevo combo en la tabla 'combos'
+            $sql_insert_combo = "INSERT INTO combos (nombre_usuario, comentario) VALUES (?, ?)";
+            $stmt = $conn->prepare($sql_insert_combo);
+            $stmt->bind_param("ss", $nombre_usuario, $comentario);
+            $stmt->execute();
+
+            $combo_id = $stmt->insert_id; // Obtener el ID del combo recién insertado
+            $stmt->close();
+
+            // Insertar las relaciones en la tabla 'combo_jokers'
+            $sql_insert_combo_joker = "INSERT INTO combo_jokers (combo_id, joker_id) VALUES (?, ?)";
+            $stmt_joker = $conn->prepare($sql_insert_combo_joker);
+            $stmt_joker->bind_param("ii", $combo_id, $joker_id);
+
+            foreach ($joker_ids as $joker_id) {
+                // Asegurarse de que el joker_id sea un entero válido
+                $joker_id = (int)$joker_id;
+                $stmt_joker->execute();
+            }
+            $stmt_joker->close();
+
+            $conn->commit(); // Confirmar la transacción
+            echo "<p style='color: green;'>¡Combo subido con éxito!</p>";
+
+        } catch (Exception $e) {
+            $conn->rollback(); // Revertir la transacción si algo sale mal
+            echo "<p style='color: red;'>Error al subir el combo: " . $e->getMessage() . "</p>";
+        }
     }
 }
 
-// Procesar el formulario cuando se selecciona un comodín
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['comodin_id'])) {
-    $comodin_id = $_POST['comodin_id'];
-
-    // Consulta para obtener la información completa del comodín seleccionado
-    $sql_comodin = "SELECT c.nombre, c.descripcion, c.precio, c.rareza, i.ruta_imagen, i.alt_text
-                    FROM comodines c
-                    JOIN imagenes_comodines i ON c.id = i.comodin_id
-                    WHERE c.id = ?";
-    
-    $stmt = $conn->prepare($sql_comodin);
-    $stmt->bind_param("i", $comodin_id);
-    $stmt->execute();
-    $result_comodin = $stmt->get_result();
-    
-    if ($result_comodin->num_rows > 0) {
-        $row = $result_comodin->fetch_assoc();
-        $comodin_nombre = htmlspecialchars($row['nombre']);
-        $comodin_descripcion = htmlspecialchars($row['descripcion']);
-        $comodin_rareza = htmlspecialchars($row['rareza']);
-        $comodin_precio = htmlspecialchars($row['precio']);
-        $comodin_imagen = htmlspecialchars($row['ruta_imagen']);
-        $comodin_alt_text = htmlspecialchars($row['alt_text']);
+// 3. Recuperar todos los Jokers para el formulario de selección
+$all_jokers = [];
+$sql_select_jokers = "SELECT id, nombre, ruta_imagen, alt_text FROM jokers ORDER BY nombre ASC";
+$result_jokers = $conn->query($sql_select_jokers);
+if ($result_jokers->num_rows > 0) {
+    while($row = $result_jokers->fetch_assoc()) {
+        $all_jokers[] = $row;
     }
-    $stmt->close();
 }
 
+// 4. Recuperar todos los Combos de la Comunidad para mostrarlos
+$community_combos = [];
+$sql_select_combos = "
+    SELECT
+        c.id AS combo_id,
+        c.nombre_usuario,
+        c.comentario,
+        GROUP_CONCAT(j.nombre ORDER BY j.nombre ASC) AS joker_nombres,
+        GROUP_CONCAT(j.ruta_imagen ORDER BY j.nombre ASC) AS joker_rutas_imagen,
+        GROUP_CONCAT(j.alt_text ORDER BY j.nombre ASC) AS joker_alt_texts
+    FROM
+        combos AS c
+    JOIN
+        combo_jokers AS cj ON c.id = cj.combo_id
+    JOIN
+        jokers AS j ON cj.joker_id = j.id
+    GROUP BY
+        c.id
+    ORDER BY
+        c.fecha_creacion DESC;
+";
+$result_combos = $conn->query($sql_select_combos);
+
+if ($result_combos->num_rows > 0) {
+    while($row = $result_combos->fetch_assoc()) {
+        // Dividir las cadenas GROUP_CONCAT en arrays
+        $row['joker_nombres'] = explode(',', $row['joker_nombres']);
+        $row['joker_rutas_imagen'] = explode(',', $row['joker_rutas_imagen']);
+        $row['joker_alt_texts'] = explode(',', $row['joker_alt_texts']);
+        $community_combos[] = $row;
+    }
+}
+
+// Cerrar conexión (se hará automáticamente al final del script, pero es buena práctica)
 $conn->close();
 ?>
 
@@ -65,61 +109,88 @@ $conn->close();
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Selecciona un Comodín</title>
-    <style>
-        body { font-family: sans-serif; }
-        .container { max-width: 800px; margin: auto; padding: 20px; }
-        .comodin-selector { text-align: center; margin-bottom: 20px; }
-        .comodin-info { text-align: center; border: 1px solid #ccc; padding: 20px; border-radius: 8px; }
-        .comodin-info img { max-width: 100%; height: auto; display: block; margin: 20px auto; }
-        .espacios { display: flex; justify-content: space-around; margin: 20px 0; }
-        .espacio { width: 50px; height: 50px; border: 1px solid #ccc; display: flex; justify-content: center; align-items: center; }
-        .comments-section { margin-top: 40px; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Combos de la Comunidad - Balatro</title>
+    <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
+    <div class="container">
+        <aside class="sidebar">
+            <h2>Navegación</h2>
+            <ul>
+                <li><a href="Barajas.html">Barajas</a></li>
+                <li><a href="Ciegas.html">Ciegas</a></li>
+                <li><a href="based de datos.php">Combos de la comunidad</a></li>
+                <li><a href="Comodines.html">Comodines</a></li>
+                <li><a href="Desafíos.html">Desafíos</a></li>
+                <li><a href="Ediciones.html">Ediciones</a></li>
+                <li><a href="Espectrales.html">Espectrales</a></li>
+                <li><a href="Etiqueta.html">Etiqueta</a></li>
+                <li><a href="Fichas.html">Fichas</a></li>
+                <li><a href="index.html">Menu</a></li>
+                <li><a href="Mejoras.html">Mejoras</a></li>
+                <li><a href="Packs y Tienda.html">Packs y Tienda</a></li>
+                <li><a href="Planeta.html">Planeta</a></li>
+                <li><a href="Sellos.html">Sellos</a></li>
+                <li><a href="Stikers.html">Stikers</a></li>
+                <li><a href="Tarot.html">Tarot</a></li>
+                <li><a href="Tickets.html">Tickets</a></li>
+            </ul>
+        </aside>
 
-<div class="container">
-    <div class="comodin-selector">
-        <h1>Selecciona un Comodín</h1>
-        <form method="POST" action="">
-            <select name="comodin_id" onchange="this.form.submit()">
-                <option value="">-- Elige un comodín --</option>
-                <?php foreach ($comodines_disponibles as $comodin): ?>
-                    <option value="<?php echo $comodin['id']; ?>" <?php echo (isset($_POST['comodin_id']) && $_POST['comodin_id'] == $comodin['id']) ? 'selected' : ''; ?>>
-                        <?php echo htmlspecialchars($comodin['nombre']); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </form>
+        <div class="main-content"> <div class="seccion-subir-combo">
+                <h1>SUBE TU COMBO</h1>
+                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                    <div class="campo">
+                        <label for="nombre-usuario">Tu Nombre:</label>
+                        <input type="text" id="nombre-usuario" name="nombre_usuario" placeholder="Ej: JokerMastro99" required>
+                    </div>
+
+                    <div class="campo">
+                        <p>Elige hasta 5 Jokers:</p>
+                        <div class="seleccion-jokers">
+                            <?php foreach ($all_jokers as $joker): ?>
+                                <div class="joker-opcion">
+                                    <input type="checkbox" id="joker_<?php echo $joker['id']; ?>" name="joker_ids[]" value="<?php echo $joker['id']; ?>">
+                                    <label for="joker_<?php echo $joker['id']; ?>">
+                                        <img src="<?php echo htmlspecialchars($joker['ruta_imagen']); ?>" alt="<?php echo htmlspecialchars($joker['alt_text']); ?>">
+                                        <span class="joker-nombre-form"><?php echo htmlspecialchars($joker['nombre']); ?></span>
+                                    </label>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
+                    <div class="campo">
+                        <label for="comentario">Comentario:</label>
+                        <textarea id="comentario" name="comentario" placeholder="Explica tu estrategia..."></textarea>
+                    </div>
+
+                    <button type="submit">SUBIR COMBO</button>
+                </form>
+            </div>
+
+            <div class="seccion-combos-comunidad">
+                <h1>COMBOS DE LA COMUNIDAD</h1>
+
+                <?php if (empty($community_combos)): ?>
+                    <p>Aún no hay combos en la comunidad. ¡Sé el primero en subir uno!</p>
+                <?php else: ?>
+                    <?php foreach ($community_combos as $combo): ?>
+                        <div class="combo-card">
+                            <h2>COMBO DE: <?php echo htmlspecialchars($combo['nombre_usuario']); ?></h2>
+                            <div class="jokers-combo">
+                                <?php for ($i = 0; $i < count($combo['joker_rutas_imagen']); $i++): ?>
+                                    <img src="<?php echo htmlspecialchars($combo['joker_rutas_imagen'][$i]); ?>" alt="<?php echo htmlspecialchars($combo['joker_alt_texts'][$i]); ?>">
+                                <?php endfor; ?>
+                            </div>
+                            <p>Comentario: <?php echo htmlspecialchars($combo['comentario']); ?></p>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+
+            </div>
+        </div>
     </div>
-
-    <?php if ($comodin_nombre): ?>
-    <div class="comodin-info">
-        <h2><?php echo $comodin_nombre; ?></h2>
-        <p><strong>Descripción:</strong> <?php echo $comodin_descripcion; ?></p>
-        <p><strong>Rareza:</strong> <?php echo $comodin_rareza; ?></p>
-        <p><strong>Precio:</strong> <?php echo $comodin_precio; ?></p>
-        
-        <img src="<?php echo $comodin_imagen; ?>" alt="<?php echo $comodin_alt_text; ?>">
-    </div>
-    <?php endif; ?>
-
-    <hr>
-
-    <div class="espacios">
-        <div class="espacio">1</div>
-        <div class="espacio">2</div>
-        <div class="espacio">3</div>
-        <div class="espacio">4</div>
-        <div class="espacio">5</div>
-    </div>
-
-    <div class="comments-section">
-        <h3>Deja tu comentario</h3>
-        <textarea style="width: 100%;" rows="5" placeholder="Escribe tu mensaje aquí..."></textarea>
-    </div>
-</div>
-
 </body>
 </html>
