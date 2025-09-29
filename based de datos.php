@@ -75,8 +75,8 @@ $sql_select_combos = "
         c.id AS combo_id,
         c.nombre_usuario,
         c.comentario,
-        GROUP_CONCAT(j.ruta_imagen ORDER BY j.nombre ASC) AS joker_rutas_imagen,
-        GROUP_CONCAT(j.alt_text ORDER BY j.nombre ASC) AS joker_alt_texts
+        GROUP_CONCAT(j.ruta_imagen ) AS joker_rutas_imagen,
+        GROUP_CONCAT(j.alt_text ) AS joker_alt_texts
     FROM
         combos AS c
     JOIN
