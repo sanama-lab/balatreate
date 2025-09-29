@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 // 3. Recuperar todos los Jokers para el formulario de selección
 $all_jokers = [];
-$sql_select_jokers = "SELECT ruta_imagen, alt_text FROM jokers ORDER BY nombre ASC";
+$sql_select_jokers = "SELECT ruta_imagen, alt_text FROM jokers";
 $result_jokers = $conn->query($sql_select_jokers);
 if ($result_jokers->num_rows > 0) {
     while($row = $result_jokers->fetch_assoc()) {
@@ -75,7 +75,6 @@ $sql_select_combos = "
         c.id AS combo_id,
         c.nombre_usuario,
         c.comentario,
-        GROUP_CONCAT(j.nombre ORDER BY j.nombre ASC) AS joker_nombres,
         GROUP_CONCAT(j.ruta_imagen ORDER BY j.nombre ASC) AS joker_rutas_imagen,
         GROUP_CONCAT(j.alt_text ORDER BY j.nombre ASC) AS joker_alt_texts
     FROM
@@ -93,14 +92,12 @@ $result_combos = $conn->query($sql_select_combos);
 
 if ($result_combos->num_rows > 0) {
     while($row = $result_combos->fetch_assoc()) {
-        // Dividir las cadenas GROUP_CONCAT en arrays
         $row['joker_rutas_imagen'] = explode(',', $row['joker_rutas_imagen']);
         $row['joker_alt_texts'] = explode(',', $row['joker_alt_texts']);
         $community_combos[] = $row;
     }
 }
 
-// Cerrar conexión (se hará automáticamente al final del script, pero es buena práctica)
 $conn->close();
 ?>
 
@@ -173,7 +170,6 @@ $conn->close();
 
                 <?php if (empty($community_combos)): ?>
                     <p>Aún no hay combos en la comunidad. ¡Sé el primero en subir uno!</p>
-                    
                 <?php else: ?>
                     <?php foreach ($community_combos as $combo): ?>
                         <div class="combo-card">
