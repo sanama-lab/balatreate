@@ -187,8 +187,9 @@ $conn->close();
             </div>
         </div>
     </div>
-</body>
 <footer>
         <p>Los derechos son reservados hacia Balatro Balatrez</p>
 </footer>
+</body>
+
 </html>
