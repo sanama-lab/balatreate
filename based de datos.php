@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 // 3. Recuperar todos los Jokers para el formulario de selección
 $all_jokers = [];
-$sql_select_jokers = "SELECT ruta_imagen, alt_text FROM jokers";
+$sql_select_jokers = "SELECT id, ruta_imagen, alt_text FROM jokers";
 $result_jokers = $conn->query($sql_select_jokers);
 if ($result_jokers->num_rows > 0) {
     while($row = $result_jokers->fetch_assoc()) {
